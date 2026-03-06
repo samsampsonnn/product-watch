@@ -3,7 +3,7 @@
 Weekly automation that scrapes trading card release and announcement data from major manufacturers and aggregator sites and writes a markdown report into this repo.
 
 - **Schedule**: Every Monday at 9:00 AM UK time (GitHub Actions uses UTC: 9:00 GMT / 10:00 BST).
-- **Reports**: Each run creates a new report in `product-watch/reports/`. Filenames are **never overwritten**: the first run of the day is `YYYY-MM-DD.md`, the next is `YYYY-MM-DD-1.md`, then `YYYY-MM-DD-2.md`, and so on. Reports include **all releases** we scrape (no date filter). The workflow commits and pushes so all reports live in the repo.
+- **Reports**: Each run creates a new report in `product-watch/reports/`. Filenames are **never overwritten**: the first run of the day is `YYYY-MM-DD.md`, the next is `YYYY-MM-DD-1.md`, then `YYYY-MM-DD-2.md`, and so on. Reports include only **releases from the last 7 days** (products with a parseable release date in that window). The workflow commits and pushes so all reports live in the repo.
 
 ## Repo
 

@@ -25,24 +25,37 @@ function parseReleaseDate(str) {
   if (month === undefined) return null;
   const day = parseInt(m[2], 10);
   const year = parseInt(m[3], 10);
-  const d = new Date(year, month, day);
+  const d = new Date(Date.UTC(year, month, day));
   return isNaN(d.getTime()) ? null : d;
 }
 
 /**
- * Filter products to those released within the last 7 days (release date between 7 days ago and today).
- * Products with unparseable release dates (e.g. TBA) are excluded so the report is only dated releases.
+ * Format a Date as YYYY-MM-DD (UTC) for reliable date-only comparison.
+ */
+function toDateString(d) {
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * Filter products to those released within the last 7 days (release date between 7 days ago and today, inclusive).
+ * Uses date-only (YYYY-MM-DD) comparison in UTC so behaviour is consistent in any timezone.
+ * Products with unparseable release dates (e.g. TBA) are excluded.
  */
 export function filterProductsLast7Days(products) {
   const now = new Date();
-  const start = new Date(now);
-  start.setDate(start.getDate() - 7);
-  start.setHours(0, 0, 0, 0);
-  now.setHours(23, 59, 59, 999);
+  const endStr = toDateString(now);
+  const startDate = new Date(now);
+  startDate.setUTCDate(startDate.getUTCDate() - 7);
+  const startStr = toDateString(startDate);
+
   return products.filter((p) => {
     const d = parseReleaseDate(p.releaseDate);
     if (d === null) return false;
-    return d >= start && d <= now;
+    const productStr = toDateString(d);
+    return productStr >= startStr && productStr <= endStr;
   });
 }
 
