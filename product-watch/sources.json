@@ -1,4 +1,21 @@
 {
+  "digitalPacks": [
+    {
+      "id": "courtyard",
+      "name": "Courtyard",
+      "url": "https://courtyard.io/"
+    },
+    {
+      "id": "arenaclub-slabpacks",
+      "name": "Arena Club (Slab Packs)",
+      "url": "https://arenaclub.com/slab-packs"
+    },
+    {
+      "id": "powerpacks-gamestop",
+      "name": "Power Packs (GameStop)",
+      "url": "https://powerpacks.gamestop.com/"
+    }
+  ],
   "aggregators": [
     {
       "id": "checklist-insider",

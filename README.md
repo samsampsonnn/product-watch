@@ -3,7 +3,7 @@
 Weekly automation that scrapes trading card release and announcement data from major manufacturers and aggregator sites and writes a markdown report into this repo.
 
 - **Schedule**: Every Monday at 9:00 AM UK time (GitHub Actions uses UTC: 9:00 GMT / 10:00 BST).
-- **Reports**: Each run creates `product-watch/reports/YYYY-MM-DD.md` with a breakdown by source. The workflow commits and pushes it so all reports live in the repo.
+- **Reports**: Each run creates `product-watch/reports/YYYY-MM-DD.md` with a breakdown by source. Only products **released in the last 7 days** are included (plus any with unknown dates like TBA). The workflow commits and pushes so all reports live in the repo.
 
 ## Repo
 
@@ -12,8 +12,11 @@ Weekly automation that scrapes trading card release and announcement data from m
 
 ## Sites scraped
 
+- **Digital Packs**: [Courtyard](https://courtyard.io/), [Arena Club Slab Packs](https://arenaclub.com/slab-packs), [Power Packs (GameStop)](https://powerpacks.gamestop.com/).
 - **Aggregators**: Checklist Insider (release calendar), Waxstat (Topps, Panini, Upper Deck calendars).
 - **Official**: Topps UK (uk.topps.com), Pokémon TCG (press.pokemon.com schedule).
+
+Reports are grouped by **sport/franchise** (Baseball, Basketball, Football, Hockey, Soccer, Pokemon, One Piece, Wrestling, Multi-Sport, Other) with a separate **Digital Packs** section for the three digital pack sites.
 
 URLs and parsers are in `product-watch/sources.json` and `product-watch/scraper.js`. If a site changes layout, you may need to update the scraper. Some sites (e.g. Topps UK, Waxstat under load) may return 403 or timeouts; the run continues and reports whatever was successfully scraped.
 

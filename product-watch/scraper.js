@@ -162,6 +162,36 @@ function parsePokemonPress(html, sourceName, baseUrl) {
   return items;
 }
 
+/**
+ * Parse digital pack / e-commerce pages for product names and links.
+ */
+function parseDigitalPack(html, sourceName, baseUrl) {
+  const $ = cheerio.load(html);
+  const items = [];
+  const seen = new Set();
+
+  $('a[href]').each((_, el) => {
+    const $el = $(el);
+    const text = $el.text().trim();
+    const href = $el.attr('href') || '';
+    if (!text || text.length < 3 || text.length > 150) return;
+    if (/^(buy|shop|cart|login|sign|search|menu|close|submit|go|next|prev)$/i.test(text)) return;
+    const url = href.startsWith('http') ? href : new URL(href, baseUrl).href;
+    if (!url.includes(new URL(baseUrl).hostname)) return;
+    const key = `${text}|${url}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    items.push({
+      name: text,
+      releaseDate: 'See site',
+      source: sourceName,
+      url,
+    });
+  });
+
+  return items;
+}
+
 async function scrapeOne(source, type) {
   try {
     const html = await fetchHtml(source.url);
@@ -177,6 +207,9 @@ async function scrapeOne(source, type) {
     if (source.id === 'pokemon-press') {
       return parsePokemonPress(html, source.name, source.url);
     }
+    if (type === 'digitalPacks') {
+      return parseDigitalPack(html, source.name, source.url);
+    }
     return parseOfficialSite(html, source.name, source.url);
   } catch (err) {
     console.error(`[scraper] ${source.name} (${source.url}):`, err.message);
@@ -185,10 +218,15 @@ async function scrapeOne(source, type) {
 }
 
 export async function scrapeAll() {
-  const { aggregators, official } = loadSources();
+  const { digitalPacks = [], aggregators, official } = loadSources();
   const all = [];
   const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  for (const source of digitalPacks) {
+    const items = await scrapeOne(source, 'digitalPacks');
+    all.push(...items);
+    await delay(800);
+  }
   for (const source of aggregators) {
     const items = await scrapeOne(source, 'aggregator');
     all.push(...items);
