@@ -3,7 +3,7 @@
  * Returns the file path and, if REPORT_BASE_URL is set, the full URL to the report.
  */
 
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile, readdir } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -91,14 +91,15 @@ function groupByCategory(products) {
   return byCategory;
 }
 
-function buildMarkdown(runDateIso, products) {
+function buildMarkdown(runDateIso, products, options = {}) {
   const runDate = runDateIso.slice(0, 10);
   const byCategory = groupByCategory(products);
+  const subtitle = options.last7DaysOnly ? 'Releases from the last 7 days.' : 'All releases.';
   const lines = [
     `# Product Watch – ${runDate}`,
     '',
     `Run at: ${runDateIso}`,
-    'Releases from the last 7 days.',
+    subtitle,
     `Total products: ${products.length}`,
     '',
     '---',
@@ -123,16 +124,36 @@ function buildMarkdown(runDateIso, products) {
 }
 
 /**
- * Write report to reports/YYYY-MM-DD.md (relative to product-watch/ by default).
- * outDir: optional directory for report file (default: ./reports inside product-watch).
+ * Pick a report filename that does not overwrite an existing file.
+ * Uses YYYY-MM-DD.md; if that exists, uses YYYY-MM-DD-1.md, YYYY-MM-DD-2.md, etc.
  */
-export async function writeReportToFile(products, runDateIso, outDir = null) {
+async function uniqueReportFilename(dir, runDate) {
+  let files;
+  try {
+    files = new Set(await readdir(dir));
+  } catch {
+    files = new Set();
+  }
+  let filename = `${runDate}.md`;
+  if (!files.has(filename)) return filename;
+  let n = 1;
+  while (files.has(`${runDate}-${n}.md`)) n++;
+  return `${runDate}-${n}.md`;
+}
+
+/**
+ * Write report to reports/ (relative to product-watch/ by default).
+ * Filename is unique: YYYY-MM-DD.md, or YYYY-MM-DD-1.md, YYYY-MM-DD-2.md if name exists.
+ * outDir: optional directory for report file (default: ./reports inside product-watch).
+ * options.last7DaysOnly: if true, report subtitle says "Releases from the last 7 days."
+ */
+export async function writeReportToFile(products, runDateIso, outDir = null, options = {}) {
   const dir = outDir ?? join(__dirname, 'reports');
   await mkdir(dir, { recursive: true });
   const runDate = runDateIso.slice(0, 10);
-  const filename = `${runDate}.md`;
+  const filename = await uniqueReportFilename(dir, runDate);
   const filePath = join(dir, filename);
-  const markdown = buildMarkdown(runDateIso, products);
+  const markdown = buildMarkdown(runDateIso, products, options);
   await writeFile(filePath, markdown, 'utf-8');
   const baseUrl = process.env.REPORT_BASE_URL;
   const reportUrl = baseUrl

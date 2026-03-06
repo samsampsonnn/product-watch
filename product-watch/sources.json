@@ -45,6 +45,11 @@
       "url": "https://uk.topps.com"
     },
     {
+      "id": "topps-us",
+      "name": "Topps (US)",
+      "url": "https://www.topps.com"
+    },
+    {
       "id": "pokemon-press",
       "name": "Pokémon TCG (Press)",
       "url": "https://press.pokemon.com/en/Items/Schedule/Sweet-Suite"
