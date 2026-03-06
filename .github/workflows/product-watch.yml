@@ -13,6 +13,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,7 +35,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add product-watch/reports/
           git diff --staged --quiet || git commit -m "Product watch report $(date -u +%Y-%m-%d)"
-          git pull --rebase origin main
-          git push
+          git push origin main
