@@ -1,0 +1,36 @@
+{
+  "aggregators": [
+    {
+      "id": "checklist-insider",
+      "name": "Checklist Insider",
+      "url": "https://www.checklistinsider.com/release-calendar"
+    },
+    {
+      "id": "waxstat-topps",
+      "name": "Waxstat (Topps)",
+      "url": "https://www.waxstat.com/2025-topps-cards-release-calendar"
+    },
+    {
+      "id": "waxstat-panini",
+      "name": "Waxstat (Panini)",
+      "url": "https://www.waxstat.com/2025-26-panini-cards-release-calendar"
+    },
+    {
+      "id": "waxstat-upperdeck",
+      "name": "Waxstat (Upper Deck)",
+      "url": "https://www.waxstat.com/2025-upper-deck-cards-release-calendar"
+    }
+  ],
+  "official": [
+    {
+      "id": "topps-uk",
+      "name": "Topps UK",
+      "url": "https://uk.topps.com"
+    },
+    {
+      "id": "pokemon-press",
+      "name": "Pokémon TCG (Press)",
+      "url": "https://press.pokemon.com/en/Items/Schedule/Sweet-Suite"
+    }
+  ]
+}

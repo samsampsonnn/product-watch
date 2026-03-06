@@ -1,0 +1,17 @@
+{
+  "name": "product-watch",
+  "version": "1.0.0",
+  "description": "Weekly trading card product watch – scrapes release calendars and writes reports to the repo",
+  "type": "module",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js",
+    "run": "node run.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
