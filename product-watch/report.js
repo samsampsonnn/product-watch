@@ -136,9 +136,16 @@ function buildMarkdown(runDateIso, products, options = {}) {
   return lines.join('\n');
 }
 
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function formatRunDate(isoString) {
+  const d = new Date(isoString);
+  return `${d.getUTCDate()}-${MONTH_NAMES[d.getUTCMonth()]}-${d.getUTCFullYear()}`;
+}
+
 /**
  * Pick a report filename that does not overwrite an existing file.
- * Uses YYYY-MM-DD.md; if that exists, uses YYYY-MM-DD-1.md, YYYY-MM-DD-2.md, etc.
+ * Uses D-Mon-YYYY.md; if that exists, uses D-Mon-YYYY-1.md, D-Mon-YYYY-2.md, etc.
  */
 async function uniqueReportFilename(dir, runDate) {
   let files;
@@ -156,14 +163,14 @@ async function uniqueReportFilename(dir, runDate) {
 
 /**
  * Write report to reports/ (relative to product-watch/ by default).
- * Filename is unique: YYYY-MM-DD.md, or YYYY-MM-DD-1.md, YYYY-MM-DD-2.md if name exists.
+ * Filename is unique: D-Mon-YYYY.md, or D-Mon-YYYY-1.md, D-Mon-YYYY-2.md if name exists.
  * outDir: optional directory for report file (default: ./reports inside product-watch).
  * options.last7DaysOnly: if true, report subtitle says "Releases from the last 7 days."
  */
 export async function writeReportToFile(products, runDateIso, outDir = null, options = {}) {
   const dir = outDir ?? join(__dirname, 'reports');
   await mkdir(dir, { recursive: true });
-  const runDate = runDateIso.slice(0, 10);
+  const runDate = formatRunDate(runDateIso);
   const filename = await uniqueReportFilename(dir, runDate);
   const filePath = join(dir, filename);
   const markdown = buildMarkdown(runDateIso, products, options);
